@@ -1,4 +1,11 @@
 # Distribution / packaging
 node_modules
 
+final_project/getallbooks
+final_project/getbooksbyISBN
+final_project/getbooksbyauthor
+final_project/getbooksbytitle
+final_project/getbookreview
+final_project/register
+
 
