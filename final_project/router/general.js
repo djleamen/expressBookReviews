@@ -1,8 +1,10 @@
 const express = require('express');
+const axios = require('axios');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const BASE_URL = `http://localhost:${process.env.PORT || 5000}`;
 
 
 public_users.post("/register", (req,res) => {
@@ -66,6 +68,45 @@ public_users.get('/title/:title',function (req, res) {
 public_users.get('/review/:isbn',function (req, res) {
   const isbn = req.params.isbn;
   return res.status(200).json(books[isbn].reviews);
+});
+
+// Task 10: Get all books using async-await with Axios
+public_users.get('/async/books', async function (req, res) {
+  try {
+    const response = await axios.get(`${BASE_URL}/`);
+    return res.status(200).send(response.data);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error fetching books list' });
+  }
+});
+
+// Task 11: Get book by ISBN using Promise with Axios
+public_users.get('/async/isbn/:isbn', function (req, res) {
+  const isbn = req.params.isbn;
+  axios
+    .get(`${BASE_URL}/isbn/${isbn}`)
+    .then((response) => res.status(200).json(response.data))
+    .catch(() => res.status(500).json({ message: 'Error fetching book by ISBN' }));
+});
+
+// Task 12: Get books by author using Promise with Axios
+public_users.get('/async/author/:author', function (req, res) {
+  const author = req.params.author;
+  axios
+    .get(`${BASE_URL}/author/${encodeURIComponent(author)}`)
+    .then((response) => res.status(200).json(response.data))
+    .catch(() => res.status(500).json({ message: 'Error fetching books by author' }));
+});
+
+// Task 13: Get books by title using async-await with Axios
+public_users.get('/async/title/:title', async function (req, res) {
+  const title = req.params.title;
+  try {
+    const response = await axios.get(`${BASE_URL}/title/${encodeURIComponent(title)}`);
+    return res.status(200).json(response.data);
+  } catch (error) {
+    return res.status(500).json({ message: 'Error fetching books by title' });
+  }
 });
 
 module.exports.general = public_users;
