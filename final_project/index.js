@@ -8,9 +8,18 @@ const genl_routes = require('./router/general.js').general;
 
 const app = express();
 
+app.set('trust proxy', 1); // needed when behind a reverse proxy (e.g., Heroku, Nginx) for secure cookies
 app.use(express.json());
 
-app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
+app.use("/customer", session({
+    secret: "fingerprint_customer",
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+        secure: true,
+        httpOnly: true
+    }
+}))
 app.use("/customer", lusca.csrf());
 
 const authRateLimiter = rateLimit({
