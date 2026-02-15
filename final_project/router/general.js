@@ -83,6 +83,13 @@ public_users.get('/async/books', async function (req, res) {
 // Task 11: Get book by ISBN using Promise with Axios
 public_users.get('/async/isbn/:isbn', function (req, res) {
   const isbn = req.params.isbn;
+
+  // Validate ISBN to ensure it only contains expected characters before using it in a URL
+  const isbnPattern = /^[0-9Xx-]+$/;
+  if (!isbnPattern.test(isbn)) {
+    return res.status(400).json({ message: 'Invalid ISBN format' });
+  }
+
   axios
     .get(`${BASE_URL}/isbn/${isbn}`)
     .then((response) => res.status(200).json(response.data))
